@@ -11,7 +11,7 @@ db.connect((error) => {
     if (error) {
         throw error
     }
-    console.log('Base conectada');
+    console.log('Database connect');
 
 })
 

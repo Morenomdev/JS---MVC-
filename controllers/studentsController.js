@@ -1,15 +1,28 @@
-const db = require('../database/conexion.js')
+const db = require('../database/conexion.js');
 
 class StudentController {
-  constructor() {
-
-  }
+  constructor() {}
   check(req, res) {
     res.json({ msg: 'Check students from class' });
   }
 
   joining(req, res) {
-    res.json({ msg: 'Join student from class' });
+
+    try {
+      const { dni, name, lastname, email } = req.body;
+      db.query(`INSERT INTO students
+                (id, dni, name, lastname, email)
+                VALUES(NULL, ?, ?, ?, ?);`,
+              [dni, name, lastname, email],(error, rows) => {
+                if(error){
+                  res.status(400).send(error)
+                }
+                res.status(201).json(rows)
+              });
+    } catch (error) {
+      // console.log(error);
+      res.status(500).send(error.message);
+    }
   }
 
   update(req, res) {
@@ -19,7 +32,7 @@ class StudentController {
     res.json({ msg: 'Delete student from class' });
   }
   checkDetail(req, res) {
-    const { id } = req.params
+    const { id } = req.params;
     res.json({ msg: `Check student from class with id ${id}` });
   }
 }
