@@ -1,10 +1,13 @@
-const db = require('../database/conexion.js');
 
-class StudentController {
-  constructor() {}
+const db = require('../database/conexion.js')
+
+class CoursesController {
+  constructor() {
+
+  }
   check(req, res) {
     try {
-      db.query(`SELECT * FROM students;`, (error, rows) => {
+      db.query(`SELECT * FROM courses;`, (error, rows) => {
         if (error) {
           res.status(400).send(error);
         }
@@ -17,18 +20,18 @@ class StudentController {
 
   joining(req, res) {
     try {
-      const { dni, name, lastname, email } = req.body;
+      const {name, description, teacher_id } = req.body;
       db.query(
-        `INSERT INTO students
-                (id, dni, name, lastname, email)
-                VALUES(NULL, ?, ?, ?, ?);`,
-        [dni, name, lastname, email],
+        `INSERT INTO courses
+                (id, name, description, teacher_id)
+                VALUES(NULL, ?, ?, ?);`,
+        [name, description, teacher_id],
         (error, rows) => {
           if (error) {
             res.status(400).send(error);
           }
           if(rows.insertId)
-            res.status(201).json({ id: rows.insertId });
+          res.status(201).json({ id: rows.insertId });
         },
       );
     } catch (error) {
@@ -40,12 +43,12 @@ class StudentController {
   update(req, res) {
     try {
       const { id } = req.params;
-      const { dni, name, lastname, email } = req.body;
+      const {name, description, teacher_id } = req.body;
       db.query(
-        `UPDATE courses.students
-          SET dni=?, name=?, lastname=?, email=?
+        `UPDATE courses.courses
+          SET name=?, desciption=?, teacher_id=?
           WHERE id=?;`,
-        [dni, name, lastname, email, id],
+        [name, description, teacher_id, id],
         (error, rows) => {
           if (error) {
             res.status(400).send(error);
@@ -67,12 +70,12 @@ class StudentController {
   erase(req, res) {
     try {
       const { id } = req.params;
-      db.query(`delete from students where id = ?;`, [id], 
+      db.query(`delete from courses where id = ?;`, [id], 
         (error, rows) => {
         if (error) {
           res.status(400).send(error);
         }
-        res.status(200).json({ msg: `Delete student with id ${id} from class` });
+        res.status(200).json({ msg: `Delete course with id ${id} from class` });
       });
     } catch (error) {
       res.status(500).send(error);
@@ -83,7 +86,7 @@ class StudentController {
   checkDetail(req, res) {
     try {
       const { id } = req.params;
-      db.query(`select * from students where id = ?;`, [id] , (error, rows) => {
+      db.query(`select * from courses where id = ?;`, [id] , (error, rows) => {
         if (error) {
           res.status(400).send(error);
         }
@@ -93,6 +96,30 @@ class StudentController {
       res.status(500).send(error);
     }
   }
+
+   associateStudent(req, res) {
+    try {
+      const {name, description, teacher_id } = req.body;
+      db.query(
+        `INSERT INTO courses
+                (id, name, description, teacher_id)
+                VALUES(NULL, ?, ?, ?);`,
+        [name, description, teacher_id],
+        (error, rows) => {
+          if (error) {
+            res.status(400).send(error);
+          }
+          if(rows.insertId)
+          res.status(201).json({ id: rows.insertId });
+        },
+      );
+    } catch (error) {
+      // console.log(error);
+      res.status(500).send(error.message);
+    }
+  }
+
+
 }
 
-module.exports = new StudentController();
+module.exports = new CoursesController();
