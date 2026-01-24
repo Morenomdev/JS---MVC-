@@ -46,7 +46,7 @@ class CoursesController {
       const {name, description, teacher_id } = req.body;
       db.query(
         `UPDATE courses.courses
-          SET name=?, desciption=?, teacher_id=?
+          SET name=?, description=?, teacher_id=?
           WHERE id=?;`,
         [name, description, teacher_id, id],
         (error, rows) => {
@@ -99,18 +99,19 @@ class CoursesController {
 
    associateStudent(req, res) {
     try {
-      const {name, description, teacher_id } = req.body;
+      const {course_id, students_id } = req.body;
       db.query(
-        `INSERT INTO courses
-                (id, name, description, teacher_id)
-                VALUES(NULL, ?, ?, ?);`,
-        [name, description, teacher_id],
+        `INSERT INTO courses_students
+                (course_id, students_id)
+                VALUES(?, ?);`,
+        [course_id, students_id],
         (error, rows) => {
           if (error) {
             res.status(400).send(error);
+          } else {
+            
+            res.status(201).json({msg: 'Student associate with a course'});
           }
-          if(rows.insertId)
-          res.status(201).json({ id: rows.insertId });
         },
       );
     } catch (error) {

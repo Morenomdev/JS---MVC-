@@ -4,7 +4,7 @@ const coursesController = require('../controllers/coursesController.js')
 
 router.get('/', coursesController.check);
 router.post('/', coursesController.joining);
-router.post('/', coursesController.associateStudent);
+router.post('/registerStudent', coursesController.associateStudent);
 
 router
 .route('/:id')
